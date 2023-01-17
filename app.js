@@ -34,7 +34,7 @@ const generateRandomNumbers = (
     (_, i) => i + minRandomValue
   );
   for (let i = 0; i < totalNumbers; i++) {
-    const randomIndex = Math.floor(Math.random() * availableNumbers.length + 1);
+    const randomIndex = Math.floor(Math.random() * availableNumbers.length);
     result.push(availableNumbers[randomIndex]);
     availableNumbers.splice(randomIndex, 1);
   }
@@ -62,23 +62,68 @@ const createBingoCard = (totalRow, totalCol) => {
   return card;
 };
 
+// const displayBingoCard = (bingoCard) => {
+//   let result = "";
+//   bingoCard.forEach((row, indexRow) => {
+//     //palitos0
+//     row.forEach((_) => {
+//       result += " ---- ";
+//     });
+//     result += "\n";
+//     //numeros
+//     row.forEach((cell) => {
+//       result += `  ${cell.number}${cell.number > 9 ? " " : "  "} `;
+//     });
+//     result += "\n";
+//     if (indexRow === bingoCard.length - 1) {
+//       row.forEach((_) => {
+//         result += " ---- ";
+//       });
+//     }
+//   });
+//   console.log(result);
+// };
+
+const checkBingo = (bingoCard, checkLine) => {
+  const findMethod = checkLine ? "some" : "every";
+  return bingoCard[findMethod]((row) => row.every((cell) => cell.isMatch));
+};
+
 const displayBingoCard = (bingoCard) => {
-  const result = "";
+  let result = "";
+  bingoCard.forEach((row, indexRow) => {
+    const reducedRow = row.reduce(
+      (accumulator, current, index) => {
+        accumulator.separators += " ---- ";
+        accumulator.numbers += `  ${current.isMatch ? "x" : current.number}${
+          current.number > 9 && !current.isMatch ? " " : "  "
+        } `;
+        return accumulator;
+      },
+      {
+        separators: "",
+        numbers: "",
+      }
+    );
+    result += `${reducedRow.separators}\n${reducedRow.numbers}\n${
+      indexRow === bingoCard.length - 1 ? reducedRow.separators : ""
+    }`;
+  });
+  console.log(result);
 };
 
 const bingo = () => {
+  let isLine = false;
+  let isBingo = false;
   const bombo = Array.from({ length: 90 }, (_, i) => i + 1);
   const getBingoNumber = () => {
-    const bomboIndex = Math.floor(Math.random() * bombo.length + 1);
+    const bomboIndex = Math.floor(Math.random() * bombo.length);
     const item = bombo.splice(bomboIndex, 1)[0];
     return item;
   };
-  const bingoNumber = getBingoNumber();
-  console.log(bingoNumber, bombo);
-
   const bingoCard = createBingoCard(3, 5);
 
-  const checkForMatching = () => {
+  const checkForMatching = (bingoNumber) => {
     bingoCard.forEach((row) => {
       row.forEach((cell) => {
         if (cell.number === bingoNumber) {
@@ -87,9 +132,23 @@ const bingo = () => {
       });
     });
   };
-  console.log(bingoCard);
 
-  checkForMatching();
+  while (!isBingo) {
+    const bingoNumber = getBingoNumber();
+    console.log(bingoNumber, bombo);
+
+    checkForMatching(bingoNumber);
+
+    displayBingoCard(bingoCard);
+
+    if (isLine) {
+      isBingo = checkBingo(bingoCard);
+      console.log("Bingo: ", isBingo);
+    } else {
+      isLine = checkBingo(bingoCard, true);
+      console.log("Line: ", isLine);
+    }
+  }
 };
 
 bingo();
