@@ -23,6 +23,16 @@ const card = [
 ]
 */
 
+const askNameAndGreet = () => {
+  let name = null;
+  while (!name) {
+    name = prompt("Hi, what's your name?");
+    name ?? alert("Please, insert name");
+  }
+  console.log(`Hi ${name}, welcome to our Bingo game !`);
+  return name;
+};
+
 const generateRandomNumbers = (
   totalNumbers,
   minRandomValue = 1,
@@ -44,13 +54,14 @@ const generateRandomNumbers = (
 const createBingoCard = (totalRow, totalCol) => {
   const card = [];
   let valuesIndex = 0;
-  const values = generateRandomNumbers(totalRow * totalCol, 1, 90);
+  const values = generateRandomNumbers(totalRow * totalCol, 1, 90).sort(
+    (a, b) => a - b
+  );
 
   for (let rowIndex = 0; rowIndex < totalRow; rowIndex++) {
     const row = [];
 
     for (let colIndex = 0; colIndex < totalCol; colIndex++) {
-      //TODO number aleatorio del 1 - 90
       row.push({
         number: values[valuesIndex],
         isMatch: false,
@@ -93,7 +104,7 @@ const displayBingoCard = (bingoCard) => {
   let result = "";
   bingoCard.forEach((row, indexRow) => {
     const reducedRow = row.reduce(
-      (accumulator, current, index) => {
+      (accumulator, current) => {
         accumulator.separators += " ---- ";
         accumulator.numbers += `  ${current.isMatch ? "x" : current.number}${
           current.number > 9 && !current.isMatch ? " " : "  "
@@ -110,9 +121,20 @@ const displayBingoCard = (bingoCard) => {
     }`;
   });
   console.log(result);
+  return result;
+};
+
+const getScoreRules = () => {
+  return "El sistema de puntuacion indicara el porcentaje de aciertos";
+};
+
+const getFinalScore = (attemptCounter, bingoCardLength) => {
+  return ((bingoCardLength / attemptCounter) * 100).toFixed(2);
 };
 
 const bingo = () => {
+  const playerName = askNameAndGreet();
+  alert(getScoreRules());
   let isLine = false;
   let isBingo = false;
   const bombo = Array.from({ length: 90 }, (_, i) => i + 1);
@@ -121,7 +143,18 @@ const bingo = () => {
     const item = bombo.splice(bomboIndex, 1)[0];
     return item;
   };
-  const bingoCard = createBingoCard(3, 5);
+
+  let bingoCard = null; //createBingoCard(3, 5);
+
+  const bingoCardRows = 3;
+  const bingoCardCols = 5;
+
+  while (!bingoCard) {
+    bingoCard = createBingoCard(bingoCardRows, bingoCardCols);
+    displayBingoCard(bingoCard);
+    !confirm("Quieres esta tarjeta? \n" + displayBingoCard(bingoCard)) &&
+      (bingoCard = null);
+  }
 
   const checkForMatching = (bingoNumber) => {
     bingoCard.forEach((row) => {
@@ -133,7 +166,10 @@ const bingo = () => {
     });
   };
 
+  let attemptCounter = 0;
+
   while (!isBingo) {
+    attemptCounter++;
     const bingoNumber = getBingoNumber();
     console.log(bingoNumber, bombo);
 
@@ -149,6 +185,15 @@ const bingo = () => {
       console.log("Line: ", isLine);
     }
   }
+
+  console.log(`Intentos ${attemptCounter}`);
+
+  alert(
+    `Porcentaje de aciertos: ${getFinalScore(
+      attemptCounter,
+      bingoCardRows * bingoCardCols
+    )}%`
+  );
 };
 
 bingo();
