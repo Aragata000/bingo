@@ -33,11 +33,11 @@ const askNameAndGreet = () => {
   return name;
 };
 
-const getFarewell = (playerName) => {
+const playAgain = (playerName) => {
   const playAgain = confirm("Do you want to play again?");
-  playAgain
-    ? bingo()
-    : alert(`${playerName} , thanks a lot for playing, see you soon`);
+  if (playAgain) return true;
+  alert(`${playerName} , thanks a lot for playing, see you soon`);
+  return false;
 };
 
 const generateRandomNumbers = (
@@ -169,72 +169,77 @@ const scores = {};
 // };
 
 const bingo = () => {
-  const playerName = askNameAndGreet();
-  alert(getScoreRules());
-  let isLine = false;
-  let isBingo = false;
-  const bombo = Array.from({ length: 90 }, (_, i) => i + 1);
-  const getBingoNumber = () => {
-    const bomboIndex = Math.floor(Math.random() * bombo.length);
-    const item = bombo.splice(bomboIndex, 1)[0];
-    return item;
-  };
+  let play = true;
+  while (play) {
+    play = false;
+    const playerName = askNameAndGreet();
+    alert(getScoreRules());
+    let isLine = false;
+    let isBingo = false;
+    const bombo = Array.from({ length: 90 }, (_, i) => i + 1);
+    const getBingoNumber = () => {
+      const bomboIndex = Math.floor(Math.random() * bombo.length);
+      const item = bombo.splice(bomboIndex, 1)[0];
+      return item;
+    };
 
-  let bingoCard = null; //createBingoCard(3, 5);
+    let bingoCard = null; //createBingoCard(3, 5);
 
-  const bingoCardRows = 3;
-  const bingoCardCols = 5;
+    const bingoCardRows = 3;
+    const bingoCardCols = 5;
 
-  while (!bingoCard) {
-    bingoCard = createBingoCard(bingoCardRows, bingoCardCols);
-    !confirm("Do you want this bingo card? \n" + displayBingoCard(bingoCard)) &&
-      (bingoCard = null);
-  }
+    while (!bingoCard) {
+      bingoCard = createBingoCard(bingoCardRows, bingoCardCols);
+      !confirm(
+        "Do you want this bingo card? \n" + displayBingoCard(bingoCard)
+      ) && (bingoCard = null);
+    }
 
-  const checkForMatching = (bingoNumber) => {
-    bingoCard.forEach((row) => {
-      row.forEach((cell) => {
-        if (cell.number === bingoNumber) {
-          cell.isMatch = true;
-        }
+    const checkForMatching = (bingoNumber) => {
+      bingoCard.forEach((row) => {
+        row.forEach((cell) => {
+          if (cell.number === bingoNumber) {
+            cell.isMatch = true;
+          }
+        });
       });
-    });
-  };
+    };
 
-  let attemptCounter = 0;
-  let continuePlaying = true;
-  while (continuePlaying && !isBingo) {
-    attemptCounter++;
-    const bingoNumber = getBingoNumber();
-    // console.log(bingoNumber, bombo);
-    continuePlaying = confirm(`Number: ${bingoNumber}\n Continue?`);
-    if (continuePlaying) {
-      checkForMatching(bingoNumber);
-      alert(displayBingoCard(bingoCard));
+    let attemptCounter = 0;
+    let continuePlaying = true;
+    while (continuePlaying && !isBingo) {
+      attemptCounter++;
+      const bingoNumber = getBingoNumber();
+      // console.log(bingoNumber, bombo);
+      continuePlaying = confirm(`Number: ${bingoNumber}\n Continue?`);
+      if (continuePlaying) {
+        checkForMatching(bingoNumber);
+        alert(displayBingoCard(bingoCard));
 
-      if (isLine) {
-        isBingo = checkBingo(bingoCard);
-      } else {
-        isLine = checkBingo(bingoCard, true);
-        isLine && alert("You have made a Line");
+        if (isLine) {
+          isBingo = checkBingo(bingoCard);
+        } else {
+          isLine = checkBingo(bingoCard, true);
+          isLine && alert("You have made a Line");
+        }
       }
     }
-  }
-  if (continuePlaying) {
-    const finalScore = getFinalScore(bombo.length);
+    if (continuePlaying) {
+      const finalScore = getFinalScore(bombo.length);
 
-    saveScores(playerName, finalScore, scores);
+      saveScores(playerName, finalScore, scores);
 
-    alert(
-      `${playerName}, you have made bingo in ${attemptCounter} attempts.\n
+      alert(
+        `${playerName}, you have made bingo in ${attemptCounter} attempts.\n
      Your final score is: ${finalScore} points\n
      Ranking: \n ${displayRanking(scores)}`
-    );
+      );
 
-    getFarewell(playerName);
-  } else {
-    alert(`Thanks for playing, see you soon\n
+      play = playAgain(playerName);
+    } else {
+      alert(`Thanks for playing, see you soon\n
     Ranking: \n ${displayRanking(scores)}`);
+    }
   }
 };
 
