@@ -15,14 +15,6 @@
     -No: Volver al paso 2        
 */
 
-/*
-const card = [
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1]
-]
-*/
-
 const askNameAndGreet = () => {
   let name = null;
   while (!name) {
@@ -164,9 +156,6 @@ const displayRanking = (scores) => {
 };
 
 const scores = {};
-// const getFinalScore = (attemptCounter, bingoCardLength) => {
-//   return ((bingoCardLength / attemptCounter) * 100).toFixed(2);
-// };
 
 const bingo = () => {
   let play = true;
@@ -210,7 +199,6 @@ const bingo = () => {
     while (continuePlaying && !isBingo) {
       attemptCounter++;
       const bingoNumber = getBingoNumber();
-      // console.log(bingoNumber, bombo);
       continuePlaying = confirm(`Number: ${bingoNumber}\n Continue?`);
       if (continuePlaying) {
         checkForMatching(bingoNumber);
