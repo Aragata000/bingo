@@ -1,20 +1,3 @@
-/*
-1-Carton 5 numeros
-    -Mostrar carton
-2-Generar numero random
-3-Checkear si esta en el carton
-    -Si: Marcar numero("X")
-    -No: futuro(puntuacion)
-4-Mostrar carton con los cambios
-5-Comprobar si previamente ha hecho linea   
-    Si: Continua
-    No: Comprobar si ahora esta haciendo linea
-        -Volver al paso 2
-6-Check si Bingo!
-    -Si: Bingo
-    -No: Volver al paso 2        
-*/
-
 const askNameAndGreet = () => {
   let name = null;
   while (!name) {
@@ -71,28 +54,6 @@ const createBingoCard = (totalRow, totalCol) => {
   }
   return card;
 };
-
-// const displayBingoCard = (bingoCard) => {
-//   let result = "";
-//   bingoCard.forEach((row, indexRow) => {
-//     //palitos0
-//     row.forEach((_) => {
-//       result += " ---- ";
-//     });
-//     result += "\n";
-//     //numeros
-//     row.forEach((cell) => {
-//       result += `  ${cell.number}${cell.number > 9 ? " " : "  "} `;
-//     });
-//     result += "\n";
-//     if (indexRow === bingoCard.length - 1) {
-//       row.forEach((_) => {
-//         result += " ---- ";
-//       });
-//     }
-//   });
-//   console.log(result);
-// };
 
 const checkBingo = (bingoCard, checkLine) => {
   const findMethod = checkLine ? "some" : "every";
@@ -172,7 +133,7 @@ const bingo = () => {
       return item;
     };
 
-    let bingoCard = null; //createBingoCard(3, 5);
+    let bingoCard = null;
 
     const bingoCardRows = 3;
     const bingoCardCols = 5;
